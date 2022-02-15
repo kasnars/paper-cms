@@ -1,4 +1,4 @@
-import { fetchPostQuery } from '@/tools/httpTools'
+import { fetchPostBody, fetchPostQuery } from '@/tools/httpTools'
 import request from '@/utils/request'
 
 export function login(data) {
@@ -31,4 +31,20 @@ export const loginHttp = (query) => {
 export const getAllUserListHttp = (body) => {
   console.log(body, 'body')
   return fetchPostQuery('/user/findAllUser', body)
+}
+
+export const logoutHttp = (query) => {
+  return fetchPostQuery('/userlogout', query)
+}
+
+export const registerHttp = (body) => {
+  return fetchPostBody('/user/register', body)
+}
+
+export const showLevelHttp = (query) => {
+  return fetchPostQuery('/user/showLevel', query)
+}
+
+export const updateHttp = (body) => {
+  return fetchPostBody('/user/update', body)
 }
