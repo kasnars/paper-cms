@@ -24,6 +24,6 @@ export const forbiddenSubject = (query) => {
     return fetchPostQuery('/subject/forbiddenSubject', query)
 }
 
-export const updateSubject = () => {
+export const updateSubjectHttp = (body) => {
     return fetchPostBody('/subject/updateSubject', body)
 }
