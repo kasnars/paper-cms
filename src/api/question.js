@@ -28,6 +28,6 @@ export const findQuestionByQuestionCodeHttp = (query) => {
     return fetchPostQuery('/question/findQuestionByQuestionCode', query)
 }
 
-export const findQuestionHttp = (query, body) => {
-    return fetchPostAll('/question/findAllQuestion', query, body)
+export const findQuestionHttp = (query) => {
+    return fetchPostQuery('/question/findQuestion', query)
 }
