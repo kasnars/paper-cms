@@ -39,7 +39,7 @@
       <el-table-column prop="code" label="编号" width="180"> </el-table-column>
       <el-table-column prop="name" label="课程名称" width="180">
       </el-table-column>
-      <el-table-column prop="status" label="状态"> </el-table-column>
+      <el-table-column prop="statusText" label="状态"> </el-table-column>
       <el-table-column label="操作">
       <template slot-scope="scope">
         <el-button
@@ -64,8 +64,8 @@
 
                 <el-form-item label="课程状态" :label-width="formLabelWidth">
             <el-select v-model="editForm.status" placeholder="请选择">
-    <el-option label="启用" value="true"></el-option>
-    <el-option label="禁用" value="false"></el-option>
+    <el-option label="启用" :value="true"></el-option>
+    <el-option label="禁用" :value="false"></el-option>
   </el-select>
         </el-form-item>
 
@@ -85,7 +85,7 @@
 
 <script>
 import { getList } from "@/api/table";
-import { getAllSubjectsHttp } from "@/api/subject";
+import { addSubjectHttp, deleteSubjectHttp, findSubjectHttp, getAllSubjectsHttp, updateSubjectHttp } from "@/api/subject";
 
 export default {
   filters: {
@@ -132,8 +132,8 @@ export default {
     this.fetchData();
   },
   mounted() {
-    // this.initData();
-    this.tableData = this.testData
+    this.initData();
+    // this.tableData = this.testData
   },
   methods: {
     fetchData() {
@@ -150,21 +150,31 @@ export default {
         this.tableData = res.data.data;
         console.log(this.tableData);
         this.tableData.forEach((item) => {
-          item.status = item.status ? "有效" : "失效";
+          item.statusText = item.status ? "有效" : "失效";
         });
       });
     },
     addHttp(){
       console.log(this.form,'form');
+      addSubjectHttp(this.form).then(() => {
+        this.initData()
+        this.form = {}
+      })
       this.dialogFormVisible = false
     },
     searchHttp(){
+      let payload = { ...this.fetchBody, name:this.searchData}
       console.log(this.searchData);
+      findSubjectHttp(payload).then(res => {
+        console.log(res.data.data);
+        this.tableData = res.data.data
+      })
     },
     handleEdit(row){
       this.editForm = JSON.parse(JSON.stringify(row))
       this.editShow = true
       console.log(row);
+
     },
     handleDelete(row){
       const { id } =  row 
@@ -174,10 +184,14 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          deleteSubjectHttp({subjectId: id}).then(() => {
+            this.initData()
           this.$message({
             type: 'success',
             message: '删除成功!'
           });
+          })
+
         }).catch(() => {
             this.$message({
             type: 'info',
@@ -187,6 +201,10 @@ export default {
     },
     editHttp(){
       console.log(this.editForm,'edithttp');
+      updateSubjectHttp(this.editForm).then(() => {
+        this.initData()
+        this.editShow = false
+      })
     }
   },
 };
