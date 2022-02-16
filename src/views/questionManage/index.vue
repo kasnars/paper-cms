@@ -27,25 +27,53 @@
         </el-input>
       </el-col>
       <el-col :span="2" >
-        <el-button type="primary" @click="dialogFormVisible = true"
+        <el-button type="primary" @click="addShow = true"
           >新增课程</el-button
         >
       </el-col>
     </el-row>
 
-    <el-dialog title="新增课程详情" :visible.sync="dialogFormVisible">
-      <el-form :model="form">
+    <el-dialog title="新增课程详情" :visible.sync="addShow">
+      <el-form :model="addForm">
         <el-form-item label="课程号" :label-width="formLabelWidth">
-          <el-input v-model="form.code" autocomplete="off"></el-input>
+          <el-input v-model="addForm.subjectId" autocomplete="off"></el-input>
+        <el-form-item label="标题" :label-width="formLabelWidth">
+          <el-input v-model="addForm.title" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="课程名" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
+        <el-form-item label="题目" :label-width="formLabelWidth">
+          <el-input v-model="addForm.content" autocomplete="off"></el-input>
+        </el-form-item>
+        <!-- <el-form-item label="内容" :label-width="formLabelWidth">
+          <el-input v-model="addForm.code" autocomplete="off"></el-input>
+        </el-form-item> -->
+        <el-form-item label="题型" :label-width="formLabelWidth">
+          <el-input v-model="addForm.questionType" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="选项A" :label-width="formLabelWidth">
+          <el-input v-model="addForm.optionA" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="选项B" :label-width="formLabelWidth">
+          <el-input v-model="addForm.optionB" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="选项C" :label-width="formLabelWidth">
+          <el-input v-model="addForm.optionC" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="选项D" :label-width="formLabelWidth">
+          <el-input v-model="addForm.optionD" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="答案" :label-width="formLabelWidth">
+          <el-input v-model="addForm.answer" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="分值" :label-width="formLabelWidth">
+          <el-input v-model="addForm.score" autocomplete="off"></el-input>
+        </el-form-item>
+
         </el-form-item>
 
         
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="addShow = false">取 消</el-button>
         <el-button type="primary" @click="addHttp"
           >确 定</el-button
         >
@@ -67,7 +95,7 @@
       width="180">
     </el-table-column>
     <el-table-column
-      prop="status"
+      prop="statusText"
       label="状态"
       width="180">
     </el-table-column>
@@ -128,7 +156,7 @@
 
 <script>
 import { getList } from '@/api/table'
-import { getAllQuestionHttp } from '@/api/question'
+import { addQuestionHttp, deleteQuestionHttp, findQuestionByQuestionCodeHttp, findQuestionHttp, getAllQuestionHttp } from '@/api/question'
 
 export default {
   filters: {
@@ -142,7 +170,10 @@ export default {
     }
   },
   data() {
+    // 0单选 2简答 1多选 多选传AB
+    // 选择多选5分 填空10分 编程20
     return {
+      formLabelWidth:'auto',
       list: null,
       listLoading: true,
       fetchBody:{
@@ -178,15 +209,29 @@ export default {
           questionType:1,
           answer:'测试答案',
         }
-      ]
+      ],
+      addShow:false,
+      addForm:{
+        answer: "",
+        content: "",
+        difficulty: 0,
+        optionA: "",
+        optionB: "",
+        optionC: "",
+        optionD: "",
+        questionType: 0,
+        score: 0,
+        subjectId: 0,
+        title: ""
+      }
     }
   },
   created() {
     this.fetchData()
   },
   mounted(){
-    // this.initData()
-    this.tableData = this.testData
+    this.initData()
+    // this.tableData = this.testData
   },
   methods: {
     fetchData() {
@@ -196,6 +241,9 @@ export default {
         this.listLoading = false
       })
     },
+    formatResStatus(obj){
+      obj.forEach(item => item.statusText = item.status?'有效':'失效')
+    },
     initData() {
         console.log(this.fetchBody);
         getAllQuestionHttp(this.fetchBody).then(res => {
@@ -203,7 +251,7 @@ export default {
             this.tableData = res.data.data
             console.log(this.tableData);
             this.tableData.forEach(item => {
-                item.status = item.status?'有效':'失效'
+                item.statusText = item.status?'有效':'失效'
             })
         })
     },
@@ -214,6 +262,35 @@ export default {
     toDetail(row){
       const { id } = row
       this.$router.push(`/questionManage/detail/${id}`)
+    },
+    searchHttp(){
+      if(this.dropVal == 1) {
+        findQuestionByQuestionCodeHttp({subjectId:this.searchData}).then(res => {
+          this.tableData = res.data.data
+          this.formatResStatus(this.tableData)
+        })
+      } else if(this.dropVal == 0){
+        let payload = {...this.fetchBody, content: this.searchData}
+        findQuestionHttp(payload).then(res => {
+          this.tableData = res.data.data
+          this.formatResStatus(this.tableData)
+        })
+      }
+    },
+    addHttp(){
+      addQuestionHttp(this.addForm).then(() => {
+        this.initData()
+        this.$message.success('添加成功')
+      })
+      this.addShow = false
+    },
+    handleDelete(row){
+      const { id } = row
+      deleteQuestionHttp({id}).then(res => {
+        this.initData()
+        this.$message.success('删除成功')
+        
+      })
     }
   }
 }
