@@ -34,7 +34,7 @@ export const getAllUserListHttp = (body) => {
 }
 
 export const logoutHttp = (query) => {
-  return fetchPostQuery('/userlogout', query)
+  return fetchPostQuery('/user/logout', query)
 }
 
 export const registerHttp = (body) => {
