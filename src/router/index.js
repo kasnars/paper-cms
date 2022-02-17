@@ -104,6 +104,13 @@ export const constantRoutes = [
         name: 'userManage',
         component: () => import('@/views/userManage/index'),
         meta: { title: '用户管理', icon: 'form' }
+      },
+      {
+        path: 'me',
+        name: 'me',
+        component: () => import('@/views/userManage/me'),
+        hidden: true,
+        meta: { title: '个人资料', icon: 'form' }
       }
     ]
   },
