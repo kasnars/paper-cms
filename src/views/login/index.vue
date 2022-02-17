@@ -67,6 +67,7 @@
 <script>
 import { validUsername } from "@/utils/validate";
 import { loginHttp } from "@/api/user";
+import { setUserInfo } from '../../tools/localDataTools'
 
 export default {
   name: "Login",
@@ -124,8 +125,10 @@ export default {
       // const query = `name=${this.loginForm.username}&password=${this.loginForm.password}`;
       // console.log(this.loginForm);
       loginHttp(this.loginForm).then((res) => {
+        console.log(res.data.data,'login');
         if (res.data.status == 200) {
           console.log(22222);
+          setUserInfo(res.data.data)
           this.$router.push({ path: "/" });
         }
       });
