@@ -13,10 +13,10 @@
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              主页
+              数据面板
             </el-dropdown-item>
           </router-link>
-          <router-link to="/">
+          <router-link to="/userManage/me">
             <el-dropdown-item>
               个人资料
             </el-dropdown-item>
@@ -28,7 +28,7 @@
             <el-dropdown-item>Docs</el-dropdown-item>
           </a> -->
           <el-dropdown-item divided @click.native="logout">
-            <span style="display:block;">退出</span>
+            <span style="display:block;">退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -40,6 +40,7 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { logoutHttp } from '../../api/user'
 
 export default {
   components: {
@@ -57,6 +58,9 @@ export default {
       this.$store.dispatch('app/toggleSideBar')
     },
     async logout() {
+      logoutHttp({}).then(res => {
+        console.log(res);
+      })
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)
     }
