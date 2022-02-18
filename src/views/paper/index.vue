@@ -3,10 +3,10 @@
     <el-card class="box-card">
       <div slot="header" class="clearfix">
         <span>{{ title[titleStep] }}</span>
-        <el-button style="float: right; padding: 3px 0" type="text"
+        <!-- <el-button style="float: right; padding: 3px 0" type="text"
         @click="titleStep++"
           >操作按钮</el-button
-        >
+        > -->
       </div>
       <el-form
         ref="form"

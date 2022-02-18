@@ -3,12 +3,17 @@
     <el-row :gutter="20">
       <el-col :span="20">
         <el-input
-          placeholder="请输入内容"
+          placeholder="请输入课程名称搜索"
           prefix-icon="el-icon-search"
           v-model="searchData"
           @keyup.enter.native="searchHttp"
         >
         </el-input>
+      </el-col>
+      <el-col :span="2" >
+        <el-button type="primary" @click="searchHttp"
+          >点击搜索</el-button
+        >
       </el-col>
       <el-col :span="2" >
         <el-button type="primary" @click="dialogFormVisible = true"
@@ -35,11 +40,11 @@
     </el-dialog>
 
     <el-table :data="tableData" stripe style="width: 100%">
-      <el-table-column prop="id" label="ID" width="180"> </el-table-column>
+      <!-- <el-table-column prop="id" label="ID" width="180"> </el-table-column> -->
       <el-table-column prop="code" label="编号" width="180"> </el-table-column>
-      <el-table-column prop="name" label="课程名称" width="180">
+      <el-table-column prop="name" label="课程名称" >
       </el-table-column>
-      <el-table-column prop="statusText" label="状态"> </el-table-column>
+      <el-table-column prop="statusText" label="状态" width="180"> </el-table-column>
       <el-table-column label="操作">
       <template slot-scope="scope">
         <el-button

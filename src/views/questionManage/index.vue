@@ -27,8 +27,13 @@
         </el-input>
       </el-col>
       <el-col :span="2" >
+        <el-button type="primary" @click="searchHttp"
+          >搜索题目</el-button
+        >
+      </el-col>
+      <el-col :span="2" >
         <el-button type="primary" @click="addShow = true"
-          >新增课程</el-button
+          >新增题目</el-button
         >
       </el-col>
     </el-row>
@@ -87,44 +92,44 @@
     <el-table-column
       prop="id"
       label="题号"
-      width="180">
+      width="100">
     </el-table-column>
     <el-table-column
       prop="subjectId"
       label="课程号"
-      width="180">
+      width="100">
     </el-table-column>
     <el-table-column
       prop="statusText"
       label="状态"
-      width="180">
+      width="100">
     </el-table-column>
     <el-table-column
       prop="title"
       label="标题"
       width="180">
     </el-table-column>
-    <!-- <el-table-column
+    <el-table-column
       prop="content"
       label="题目"
-      width="180">
-    </el-table-column> -->
+      >
+    </el-table-column>
     <el-table-column
-      prop="difficulty"
+      prop="diffText"
       label="难度"
-      width="180"
+      width="100"
       >
     </el-table-column>
     <el-table-column
       prop="score"
       label="分值"
-      width="180"
+      width="100"
       >
     </el-table-column>
     <el-table-column
-      prop="questionType"
+      prop="typeText"
       label="题型"
-      width="180"
+      width="100"
       >
     </el-table-column>
     <!-- <el-table-column
@@ -139,9 +144,6 @@
           size="mini"
           @click="toDetail(scope.row)">详情</el-button>
 
-        <el-button
-          size="mini"
-          @click="handleEdit(scope.row)">修改</el-button>
 
         <el-button
           size="mini"
@@ -157,6 +159,7 @@
 <script>
 import { getList } from '@/api/table'
 import { addQuestionHttp, deleteQuestionHttp, findQuestionByQuestionCodeHttp, findQuestionHttp, getAllQuestionHttp } from '@/api/question'
+import { getDiffLabel, getQuesTypeLabel } from '../../tools/getEnum'
 
 export default {
   filters: {
@@ -173,6 +176,7 @@ export default {
     // 0单选 2简答 1多选 多选传AB
     // 选择多选5分 填空10分 编程20
     return {
+      getDiffLabel,
       formLabelWidth:'auto',
       list: null,
       listLoading: true,
@@ -188,11 +192,11 @@ export default {
       },
       dropItem:[
       {
-        label:'标题内容',
+        label:'按标题搜索',
         value:0
       },
       {
-        label:'学科编码',
+        label:'按学科编码',
         value:1
       },
       ],
@@ -252,6 +256,8 @@ export default {
             console.log(this.tableData);
             this.tableData.forEach(item => {
                 item.statusText = item.status?'有效':'失效'
+                item.diffText = getDiffLabel(item.difficulty)
+                item.typeText = getQuesTypeLabel(item.questionType)
             })
         })
     },

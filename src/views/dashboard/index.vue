@@ -1,6 +1,8 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
+  <!-- <ul class="infinite-list" v-infinite-scroll="load" style="overflow:auto">
+    <li v-for="i in count" class="infinite-list-item">{{ i }}</li>
+  </ul> -->
   </div>
 </template>
 
@@ -13,7 +15,17 @@ export default {
     ...mapGetters([
       'name'
     ])
-  }
+  },
+  data () {
+      return {
+        count: 0
+      }
+    },
+    methods: {
+      load () {
+        this.count += 2
+      }
+    }
 }
 </script>
 

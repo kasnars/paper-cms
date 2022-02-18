@@ -8,9 +8,10 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">武汉学院试卷系统</h3>
       </div>
 
+<div v-if="loginPage">
       <el-form-item prop="name">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -47,35 +48,134 @@
           />
         </span>
       </el-form-item>
+</div>
+
+
+<div v-else>
+      <el-form-item >
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          v-model="regForm.email"
+          placeholder="请输入邮箱"
+          type="text"
+          tabindex="1"
+        />
+      </el-form-item>
+
+            <el-form-item >
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          ref="name"
+          v-model="regForm.phone"
+          placeholder="请输入手机号"
+          name="name"
+          type="text"
+          tabindex="1"
+        />
+      </el-form-item>
+
+      <el-form-item >
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          v-model="regForm.name"
+          placeholder="请输入用户名"
+          type="text"
+          tabindex="1"
+        />
+      </el-form-item>
+
+      <el-form-item >
+        <span class="svg-container">
+          <svg-icon icon-class="password" />
+        </span>
+        <el-input
+          :key="passwordType"
+          v-model="regForm.password"
+          :type="passwordType"
+          placeholder="请输入密码"
+          tabindex="2"
+        />
+        <span class="show-pwd" @click="showPwd">
+          <svg-icon
+            :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"
+          />
+        </span>
+      </el-form-item>
+</div>
+
+
+
+
+
+      <div v-if="loginPage">
 
       <el-button
         :loading="loading"
         type="primary"
         style="width: 100%; margin-bottom: 30px"
         @click.native.prevent="handleLogin"
-        >Login</el-button
+        >登录</el-button
       >
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width: 100%; margin-bottom: 30px"
+        @click.native.prevent="loginPage = false"
+        >注册</el-button
+      >
+      </div>
 
-      <div class="tips">
+      <div v-else>
+
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width: 100%; margin-bottom: 30px"
+        @click.native.prevent="toSign"
+        >立即注册</el-button
+      >
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width: 100%; margin-bottom: 30px"
+        @click.native.prevent="loginPage = true"
+        >返回登录</el-button
+      >
+      </div>
+
+      <!-- <div class="tips">
         <span style="margin-right: 20px">username: admin</span>
         <span> password: any</span>
-      </div>
+      </div> -->
     </el-form>
   </div>
 </template>
 
 <script>
 import { validUsername } from "@/utils/validate";
-import { loginHttp } from "@/api/user";
+import { loginHttp, registerHttp } from "@/api/user";
 import { setUserInfo } from '../../tools/localDataTools'
 
 export default {
   name: "Login",
   data() {
     return {
+      loginPage:true,
       loginForm: {
-        name: "admin",
-        password: "111111",
+        name: "",
+        password: "",
+      },
+      regForm:{
+        email:'',
+        name:'',
+        password:'',
+        phone:''
       },
       // loginRules: {
       //   username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -133,6 +233,14 @@ export default {
         }
       });
     },
+    toSign(){
+      console.log(this.regForm,'reg')
+      registerHttp(this.regForm).then(res => {
+        this.$message.success('注册成功')
+        this.loginPage = true
+        this.regForm = {}
+      })
+    }
   },
 };
 </script>
@@ -150,6 +258,7 @@ $cursor: #fff;
     color: $cursor;
   }
 }
+
 
 /* reset element-ui css */
 .login-container {
@@ -188,6 +297,10 @@ $cursor: #fff;
 $bg: #2d3a4b;
 $dark_gray: #889aa4;
 $light_gray: #eee;
+
+.el-button+.el-button {
+  margin: 0;
+}
 
 .login-container {
   min-height: 100%;
