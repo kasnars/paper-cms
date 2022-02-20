@@ -41,6 +41,7 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import { logoutHttp } from '../../api/user'
+import { setUserLogoutStatus } from '@/tools/localDataTools'
 
 export default {
   components: {
@@ -60,6 +61,7 @@ export default {
     async logout() {
       logoutHttp({}).then(res => {
         console.log(res);
+        setUserLogoutStatus()
       })
       await this.$store.dispatch('user/logout')
       this.$router.push(`/login?redirect=${this.$route.fullPath}`)

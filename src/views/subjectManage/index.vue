@@ -58,7 +58,7 @@
     </el-table-column>
     </el-table>
 
-      <el-dialog title="新增课程详情" :visible.sync="editShow">
+      <el-dialog title="修改课程详情" :visible.sync="editShow">
       <el-form :model="editForm">
         <el-form-item label="课程号" :label-width="formLabelWidth">
           <el-input v-model="editForm.code" autocomplete="off"></el-input>

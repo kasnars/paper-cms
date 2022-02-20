@@ -3,29 +3,41 @@
     <div slot="header" class="clearfix">
       <span>{{ questionInfo.title || "暂未设置题目标题" }}</span>
       <el-button
-type="primary" round style="float: right; "
+        type="primary"
+        round
+        style="float: right"
         icon="el-icon-edit"
         size="small"
         @click="changeStatus"
         >{{ notChangeStatus ? "修改题目" : "提交修改" }}</el-button
       >
-        <el-button type="info" round style="float: right; 
-        margin-right:5px"
+      <el-button
+        type="info"
+        round
+        style="float: right; margin-right: 5px"
         icon="el-icon-edit"
         size="small"
         @click="notChangeStatus = true"
         v-if="!notChangeStatus"
-        >取消修改</el-button>
+        >取消修改</el-button
+      >
     </div>
     <div>
       <el-form label-position="left" label-width="80px" :model="questionInfo">
-                  <el-form-item label="当前状态" v-if="notChangeStatus">
+        <el-form-item label="当前状态" v-if="notChangeStatus">
           <span style="margin-right: 10px">
             {{ questionInfo.status ? "已启用" : "已禁用" }}
           </span>
-          <el-button type="danger" round v-if="questionInfo.status" @click="toOFF">点击禁用</el-button>
-          <el-button type="success" round v-else @click="toON">点击启用</el-button>
-          
+          <el-button
+            type="danger"
+            round
+            v-if="questionInfo.status"
+            @click="toOFF"
+            >点击禁用</el-button
+          >
+          <el-button type="success" round v-else @click="toON"
+            >点击启用</el-button
+          >
         </el-form-item>
         <el-form-item label="标题">
           <div v-if="notChangeStatus">
@@ -53,7 +65,7 @@ type="primary" round style="float: right; "
         </el-form-item>
         <el-form-item label="难度">
           <div v-if="notChangeStatus">
-            {{ getDiffLabel(questionInfo.difficulty)  }}
+            {{ getDiffLabel(questionInfo.difficulty) }}
           </div>
           <el-input v-model="questionInfo.difficulty" v-else></el-input>
         </el-form-item>
@@ -99,20 +111,24 @@ type="primary" round style="float: right; "
           </div>
           <el-input v-model="questionInfo.answer" v-else></el-input>
         </el-form-item>
-
       </el-form>
     </div>
   </el-card>
 </template>
 
 <script>
-import { disableQuestionHttp, enableQuestionHttp, findQuestionByIdHttp, updateQuestionHttp } from "@/api/question";
-import { getDiffLabel, getQuesTypeLabel } from '../../tools/getEnum'
+import {
+  disableQuestionHttp,
+  enableQuestionHttp,
+  findQuestionByIdHttp,
+  updateQuestionHttp,
+} from "@/api/question";
+import { getDiffLabel, getQuesTypeLabel } from "../../tools/getEnum";
 export default {
   data() {
     return {
-        getDiffLabel,
-        getQuesTypeLabel,
+      getDiffLabel,
+      getQuesTypeLabel,
       id: "",
       questionInfo: {},
       notChangeStatus: true,
@@ -142,18 +158,18 @@ export default {
         });
       }
     },
-    toON(){
-        enableQuestionHttp({id:this.id}).then(() => {
-            this.$message.success('开启成功')
-            this.initQuestionInfo()
-        })
+    toON() {
+      enableQuestionHttp({ id: this.id }).then(() => {
+        this.$message.success("开启成功");
+        this.initQuestionInfo();
+      });
     },
-    toOFF(){
-        disableQuestionHttp({id:this.id}).then(() => {
-            this.$message.success('禁用成功')
-            this.initQuestionInfo()
-        })
-    }
+    toOFF() {
+      disableQuestionHttp({ id: this.id }).then(() => {
+        this.$message.success("禁用成功");
+        this.initQuestionInfo();
+      });
+    },
   },
 };
 </script>

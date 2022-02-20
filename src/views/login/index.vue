@@ -160,7 +160,7 @@
 <script>
 import { validUsername } from "@/utils/validate";
 import { loginHttp, registerHttp } from "@/api/user";
-import { setUserInfo } from '../../tools/localDataTools'
+import { setUserInfo, setUserLoginStatus } from '../../tools/localDataTools'
 
 export default {
   name: "Login",
@@ -229,6 +229,7 @@ export default {
         if (res.data.status == 200) {
           console.log(22222);
           setUserInfo(res.data.data)
+          setUserLoginStatus()
           this.$router.push({ path: "/" });
         }
       });

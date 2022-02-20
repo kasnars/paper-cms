@@ -1,32 +1,82 @@
 <template>
-  <div class="dashboard-container">
-  <!-- <ul class="infinite-list" v-infinite-scroll="load" style="overflow:auto">
-    <li v-for="i in count" class="infinite-list-item">{{ i }}</li>
-  </ul> -->
+
+  <div>
+    <el-card class="box-card">
+  <div slot="header" class="clearfix">
+    <span>错题表</span>
+    <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
+  </div>
+
+    <el-table :data="tableData" stripe style="width: 100%">
+      <el-table-column prop="id" label="题号" width="100"> </el-table-column>
+      <el-table-column prop="subjectId" label="课程号" width="100">
+      </el-table-column>
+      <el-table-column prop="title" label="标题" width="180"> </el-table-column>
+      <el-table-column prop="content" label="题目"> </el-table-column>
+      <el-table-column prop="diffText" label="难度" width="100">
+      </el-table-column>
+      <el-table-column prop="score" label="分值" width="100"> </el-table-column>
+      <el-table-column prop="typeText" label="题型" width="100">
+      </el-table-column>
+      <!-- <el-table-column
+      prop="answer"
+      label="答案"
+      >
+    </el-table-column> -->
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button size="mini" type="primary" @click="toDetail(scope.row)"
+            >题目详情</el-button
+          >
+        </template>
+      </el-table-column>
+    </el-table>
+    </el-card>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { checkWrongQuestionHttp } from "@/api/paper";
+import { mapGetters } from "vuex";
+import { getDiffLabel, getQuesTypeLabel } from "../../tools/getEnum";
 
 export default {
-  name: 'Dashboard',
+  name: "Dashboard",
   computed: {
-    ...mapGetters([
-      'name'
-    ])
+    ...mapGetters(["name"]),
   },
-  data () {
-      return {
-        count: 0
-      }
+  data() {
+    return {
+      count: 0,
+      payload: {
+        currentPage: 1,
+        pageSize: 20,
+      },
+      tableData: [],
+    };
+  },
+  methods: {
+    initData() {
+      checkWrongQuestionHttp(this.payload).then((res) => {
+        console.log(res, "res");
+        this.tableData = res.data.data;
+        console.log(this.tableData);
+        this.tableData.forEach((item) => {
+          item.statusText = item.status ? "有效" : "失效";
+          item.diffText = getDiffLabel(item.difficulty);
+          item.typeText = getQuesTypeLabel(item.questionType);
+        });
+      });
     },
-    methods: {
-      load () {
-        this.count += 2
-      }
-    }
-}
+    toDetail(row) {
+      const { id } = row;
+      this.$router.push(`/questionManage/detail/${id}`);
+    },
+  },
+  mounted() {
+    this.initData();
+  },
+};
 </script>
 
 <style lang="scss" scoped>
