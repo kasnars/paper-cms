@@ -2,10 +2,7 @@
 
   <div>
     <el-card class="box-card">
-  <div slot="header" class="clearfix">
-    <span>错题表</span>
-    <!-- <el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button> -->
-  </div>
+
 
     <el-table :data="tableData" stripe style="width: 100%">
       <el-table-column prop="id" label="题号" width="100"> </el-table-column>
@@ -94,7 +91,7 @@ export default {
     },
     toDetail(row) {
       const { id } = row;
-      this.$router.push(`/questionManage/detail/${id}`);
+      this.$router.push(`/${id}`);
     },
           nextPage() {
       this.payload.currentPage++;

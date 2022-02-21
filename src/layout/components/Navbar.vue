@@ -13,7 +13,7 @@
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              数据面板
+              错题列表
             </el-dropdown-item>
           </router-link>
           <router-link to="/userManage/me">

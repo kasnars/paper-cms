@@ -15,3 +15,7 @@ export const revisePaperHttp = (query) => {
 export const writeAnswerHttp = (body) => {
     return fetchPostBody('/paper/writeAnswer', body)
 }
+
+export const findWrongQuestionByIdHttp = (query) => {
+    return fetchPostQuery('/paper/findWrongQuestionById',query)
+}
