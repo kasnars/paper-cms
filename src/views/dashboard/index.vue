@@ -31,6 +31,30 @@
         </template>
       </el-table-column>
     </el-table>
+        <el-row :gutter="20">
+      <el-col :span="12" :offset="6"
+        ><div class="grid-content bg-purple">
+
+                              <el-button
+            type="primary"
+            style="float: right; margin: 20px"
+            @click="nextPage"
+            :disabled="tableData.length < payload.pageSize"
+          >
+            下一页</el-button
+          >
+          <el-button
+            type="primary"
+            style="float: right; margin: 20px"
+            @click="prePage"
+            :disabled="payload.currentPage === 1"
+          >
+            上一页</el-button
+          >
+
+        </div></el-col
+      >
+    </el-row>
     </el-card>
   </div>
 </template>
@@ -50,7 +74,7 @@ export default {
       count: 0,
       payload: {
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 10,
       },
       tableData: [],
     };
@@ -72,10 +96,19 @@ export default {
       const { id } = row;
       this.$router.push(`/questionManage/detail/${id}`);
     },
+          nextPage() {
+      this.payload.currentPage++;
+      this.initData();
+    },
+    prePage(){
+      this.payload.currentPage--
+      this.initData()
+    }
   },
   mounted() {
     this.initData();
   },
+
 };
 </script>
 
