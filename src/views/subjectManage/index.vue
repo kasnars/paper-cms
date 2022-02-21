@@ -85,6 +85,30 @@
         >
       </div>
     </el-dialog>
+        <el-row :gutter="20">
+      <el-col :span="12" :offset="6"
+        ><div class="grid-content bg-purple">
+
+                              <el-button
+            type="primary"
+            style="float: right; margin: 20px"
+            @click="nextPage"
+            :disabled="tableData.length < fetchBody.pageSize"
+          >
+            下一页</el-button
+          >
+          <el-button
+            type="primary"
+            style="float: right; margin: 20px"
+            @click="prePage"
+            :disabled="fetchBody.currentPage === 1"
+          >
+            上一页</el-button
+          >
+
+        </div></el-col
+      >
+    </el-row>
   </div>
 </template>
 
@@ -109,7 +133,7 @@ export default {
       listLoading: true,
       fetchBody: {
         currentPage: 1,
-        pageSize: 20,
+        pageSize: 10,
       },
       tableData: [],
       searchData: "",
@@ -210,6 +234,14 @@ export default {
         this.initData()
         this.editShow = false
       })
+    },
+        nextPage() {
+      this.fetchBody.currentPage++;
+      this.initData();
+    },
+    prePage(){
+      this.fetchBody.currentPage--
+      this.initData()
     }
   },
 };
