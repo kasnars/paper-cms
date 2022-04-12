@@ -5,7 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-import { getUserLoginStatus } from '@/tools/localDataTools'
+import { getUserLoginStatus, getNowUserPermission } from '@/tools/localDataTools'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -72,7 +72,8 @@ export const constantRoutes = [
         path: 'index',
         name: 'userManage',
         component: () => import('@/views/userManage/index'),
-        meta: { title: '用户管理', icon: 'form',requireLogin:true }
+        meta: { title: '用户管理', icon: 'form',requireLogin:true },
+        hidden: getNowUserPermission(1)
       },
       {
         path: 'me',
@@ -98,6 +99,32 @@ export const constantRoutes = [
   },
 
   {
+    path: '/chaptersManage',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'chaptersManage',
+        component: () => import('@/views/chaptersManage/index'),
+        meta: { title: '章节管理', icon: 'form', requireLogin: true }
+      }
+    ]
+  },
+
+  {
+    path: '/knowledgeManage',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'knowledgeManage',
+        component: () => import('@/views/knowledgeManage/index'),
+        meta: { title: '知识点管理', icon: 'form', requireLogin: true }
+      }
+    ]
+  },
+
+  {
     path: '/questionManage',
     component: Layout,
     children: [
@@ -105,7 +132,8 @@ export const constantRoutes = [
         path: 'index',
         name: 'questionManage',
         component: () => import('@/views/questionManage/index'),
-        meta: { title: '题库管理', icon: 'form',requireLogin:true }
+        meta: { title: '题库管理', icon: 'form',requireLogin:true },
+        // hidden: getNowUserPermission(3)
       },
       {
         path: 'detail/:id',

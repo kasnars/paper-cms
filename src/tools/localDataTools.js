@@ -19,3 +19,8 @@ export const setUserLogoutStatus = () => {
 export const getUserLoginStatus = () => {
     return localStorage.getItem('isLogin') === '1'
 }
+
+export const getNowUserPermission = (buttonPermission) => {
+    const { level } = getUserInfo()
+    return buttonPermission < level
+}
