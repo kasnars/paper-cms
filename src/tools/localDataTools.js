@@ -21,6 +21,8 @@ export const getUserLoginStatus = () => {
 }
 
 export const getNowUserPermission = (buttonPermission) => {
-    const { level } = getUserInfo()
-    return buttonPermission < level
+
+        const { level } = getUserInfo()
+        return buttonPermission < level
+
 }

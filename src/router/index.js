@@ -73,7 +73,7 @@ export const constantRoutes = [
         name: 'userManage',
         component: () => import('@/views/userManage/index'),
         meta: { title: '用户管理', icon: 'form',requireLogin:true },
-        hidden: getNowUserPermission(1)
+        hidden: getUserLoginStatus() && getNowUserPermission(1)
       },
       {
         path: 'me',
