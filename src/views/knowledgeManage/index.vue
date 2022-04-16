@@ -1,39 +1,143 @@
 <template>
   <div class="app-container">
-      知识点
+      <!-- 章节
+      <Charts-pop></Charts-pop> -->
+
+          <el-row :gutter="20">
+      <el-col :span="20">
+        <el-input
+          placeholder="请输入关键字搜索"
+          prefix-icon="el-icon-search"
+          v-model="searchData"
+          @keyup.enter.native="searchHttp"
+        >
+                  <template slot="prepend">
+            <el-dropdown>
+              <span class="el-dropdown-link">
+                {{ dropItem[dropVal].label }}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item
+                  v-for="(item, index) in dropItem"
+                  :key="index"
+                  @click.native="dropVal = item.value"
+                >
+                  {{ item.label }}
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </el-input>
+      </el-col>
+      <el-col :span="2">
+        <el-button type="primary" @click="searchHttp">搜索题目</el-button>
+      </el-col>
+      <el-col :span="2">
+        <el-button type="primary" @click="addShow = true">新增题目</el-button>
+      </el-col>
+    </el-row>
+
+        <el-dialog title="新增章节" :visible.sync="addShow">
+      <el-form :model="addForm">
+ 
+
+        <el-form-item label="章节名称" :label-width="formLabelWidth">
+          <el-input v-model="addForm.chapterName" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="课程名称" :label-width="formLabelWidth">
+          <el-input v-model="addForm.subjectName" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="知识点名称" :label-width="formLabelWidth">
+          <el-input v-model="addForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+
+
+        
+
+      </el-form>
+
+      
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addShow = false">取 消</el-button>
+        <el-button type="primary" @click="addHttp">确 定</el-button>
+      </div>
+    </el-dialog>
+
+
+<!-- xiugai -->
+            <el-dialog title="修改章节" :visible.sync="updateShow">
+      <el-form :model="updateForm">
+ 
+
+        <el-form-item label="章节名称" :label-width="formLabelWidth">
+          <el-input v-model="updateForm.chapterName" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="课程名称" :label-width="formLabelWidth">
+          <el-input v-model="updateForm.subjectName" autocomplete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="知识点名称" :label-width="formLabelWidth">
+          <el-input v-model="updateForm.name" autocomplete="off"></el-input>
+        </el-form-item>
+
+
+        
+
+      </el-form>
+
+      
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="updateShow = false">取 消</el-button>
+        <el-button type="primary" @click="updateData">确 定</el-button>
+      </div>
+    </el-dialog>
+
+
   <el-table
     :data="tableData"
     stripe
     style="width: 100%">
     <el-table-column
       prop="id"
-      label="ID"
+      label="知识点ID"
       width="180">
     </el-table-column>
     <el-table-column
-      prop="level"
-      label="等级"
+      prop="chapterName"
+      label="章节名"
+      width="180">
+    </el-table-column>
+    <el-table-column
+      prop="subjectName"
+      label="课程名"
       width="180">
     </el-table-column>
     <el-table-column
       prop="name"
-      label="姓名"
+      label="知识点"
       width="180">
     </el-table-column>
-    <el-table-column
-      prop="phone"
-      label="手机号"
-      width="180">
-    </el-table-column>
-    <el-table-column
+    <!-- <el-table-column
       prop="status"
       label="状态"
       width="180">
-    </el-table-column>
-    <el-table-column
-      prop="email"
-      label="邮箱">
-    </el-table-column>
+    </el-table-column> -->
+
+          <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button size="mini"  @click="handleUpdate(scope.row)"
+            >修改</el-button
+          >
+          <el-button size="mini" type="danger" @click="handleDelete(scope.row)"
+            >删除</el-button
+          >
+        </template>
+      </el-table-column>
+
   </el-table>
           <el-row :gutter="20">
       <el-col :span="12" :offset="6"
@@ -64,9 +168,14 @@
 
 <script>
 import { getList } from '@/api/table'
-import { getAllUserListHttp } from '@/api/user'
+import { findKnowledgeByCnameHttp, addKnowledgeHttp, deleteKnowledgeHttp,  updateKnowledgeHttp, findKnowledgeBySnameHttp } from '@/api/knowledge'
+
+import ChartsPop from '../../components/ChartsPop'
 
 export default {
+  components:[
+    ChartsPop
+  ],
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -79,13 +188,40 @@ export default {
   },
   data() {
     return {
+      dropVal: 0,
+      dropItem:[
+        {
+          label: "按章节搜索",
+          value: 0,
+        },
+        {
+          label: "按课程搜索",
+          value: 1,
+        },
+      ],
+      updateForm:{},
+      updateShow:false,
       list: null,
       listLoading: true,
+      searchData:'',
       fetchBody:{
           currentPage:1,
-          pageSize:10
+          pageSize:10,
+          name:''
       },
-      tableData:[]
+      initFetchBody:{
+          currentPage:1,
+          pageSize:10,
+          name:''
+      },
+      tableData:[],
+      addShow:false,
+      addForm:{
+        chapterName:'',
+        name:'',
+        subjectName:'',
+      },
+      formLabelWidth: "auto",
     }
   },
   created() {
@@ -95,6 +231,44 @@ export default {
     this.initData()
   },
   methods: {
+    handleUpdate(row){
+      this.updateShow = true
+      console.log(row);
+      this.updateForm = row
+
+    },
+    updateData(){
+            updateKnowledgeHttp(this.updateForm).then(res => {
+        this.initData();
+        this.$message.success("修改成功");
+        this.updateShow = false
+        this.updateForm = {}
+      })
+    },
+    handleDelete(row){
+      const { id } = row;
+      deleteKnowledgeHttp({ Id:id }).then((res) => {
+        this.initData();
+        this.$message.success("删除成功");
+      });
+    },
+    addHttp(){
+      addKnowledgeHttp(this.addForm).then(res => {
+        this.fetchBody = this.initFetchBody
+        this.initData()
+        this.addShow = false
+        this.addForm = {}
+        if (res.data.status === 200) {
+          this.$message.success('添加成功')
+        }
+        
+      })
+    },
+    searchHttp(){
+      this.fetchBody.name = this.searchData
+      this.fetchBody.currentPage = 1
+      this.initData()
+    },
     fetchData() {
       this.listLoading = true
       getList().then(response => {
@@ -103,16 +277,22 @@ export default {
       })
     },
     initData() {
-        let query = `currentPage=${this.fetchBody.currentPage}&pageSize=${this.fetchBody.pageSize}`
         console.log(this.fetchBody);
-        getAllUserListHttp(this.fetchBody).then(res => {
+        if (this.dropVal === 0) {
+                  findKnowledgeByCnameHttp(this.fetchBody).then(res => {
             console.log(res,'res');
             this.tableData = res.data.data
             console.log(this.tableData);
-            this.tableData.forEach(item => {
-                item.status = item.status?'有效':'失效'
-            })
         })
+        } else {
+        findKnowledgeBySnameHttp(this.fetchBody).then(res => {
+            console.log(res,'res');
+            this.tableData = res.data.data
+            console.log(this.tableData);
+        })
+        }
+
+
     },
             nextPage() {
       this.fetchBody.currentPage++;

@@ -71,7 +71,7 @@
         </el-form-item>
         <el-form-item label="科目">
           <div v-if="notChangeStatus">
-            {{ questionInfo.subjectId || "暂未设置" }}
+            {{ questionInfo.subject || "暂未设置" }}
           </div>
           <el-input v-model="questionInfo.subjectId" v-else></el-input>
         </el-form-item>

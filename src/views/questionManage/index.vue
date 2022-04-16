@@ -37,14 +37,38 @@
 
     <el-dialog title="新增课程详情" :visible.sync="addShow">
       <el-form :model="addForm">
-        <el-form-item label="课程号" :label-width="formLabelWidth">
+        <el-form-item label="课程名" :label-width="formLabelWidth">
           <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
-          <el-select v-model="addForm.subjectId" placeholder="请选择科目">
+          <el-select v-model="addForm.subject" placeholder="请选择科目">
             <el-option
               v-for="item in dropItemList"
               :key="item.id"
               :label="item.name"
-              :value="item.code"
+              :value="item.name"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="章节" :label-width="formLabelWidth">
+          <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
+          <el-select v-model="addForm.chapter" placeholder="请选择科目">
+            <el-option
+              v-for="item in chapterList"
+              :key="item.id"
+              :label="item.chapterName"
+              :value="item.chapterName"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="知识点" :label-width="formLabelWidth">
+          <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
+          <el-select v-model="addForm.knowledge" placeholder="请选择科目">
+            <el-option
+              v-for="item in knowledgeList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -128,7 +152,7 @@
 
     <el-table :data="tableData" stripe style="width: 100%">
       <el-table-column prop="id" label="题号" width="100"> </el-table-column>
-      <el-table-column prop="subjectId" label="课程号" width="100">
+      <el-table-column prop="subject" label="课程号" width="100">
       </el-table-column>
       <el-table-column prop="statusText" label="状态" width="100">
       </el-table-column>
@@ -203,6 +227,9 @@ import {
 import { getAllSubjectsHttp } from "@/api/subject";
 import { getDiffLabel, getQuesTypeLabel } from "../../tools/getEnum";
 import { QUESTION_TYPE_ENUM, DIFF_ENUM } from "../../tools/getEnum";
+import { findChapterHttp } from '../../api/chapter'
+import {findKnowledgeByCnameHttp } from '../../api/knowledge'
+// import { getAllQuestionHttp } from '../../api/subject'
 
 export default {
   filters: {
@@ -269,10 +296,19 @@ export default {
         optionD: null,
         questionType: null,
         score: null,
-        subjectId: null,
+        subject: null,
         title: "",
+        knowledge:'',
+        chapter:'',
       },
       dropItemList: [],
+      defaultFetchBody:{
+        currentPage: 1,
+        pageSize: 9999,
+        name:''
+      },
+      chapterList:[],
+      knowledgeList:[]
     };
   },
   watch: {
@@ -336,7 +372,7 @@ export default {
     },
     searchHttp() {
       if (this.dropVal == 1) {
-        findQuestionByQuestionCodeHttp({ subjectId: this.searchData }).then(
+        findQuestionByQuestionCodeHttp({ subject: this.searchData }).then(
           (res) => {
             this.tableData = res.data.data;
             this.formatResStatus(this.tableData);
@@ -369,6 +405,14 @@ export default {
         console.log(res.data.data);
         this.dropItemList = res.data.data;
       });
+      findChapterHttp(this.defaultFetchBody).then(res => {
+        this.chapterList = res.data.data
+        console.log(this.chapterList,'c');
+      })
+      findKnowledgeByCnameHttp(this.defaultFetchBody).then(res => {
+        this.knowledgeList = res.data.data
+        console.log(this.knowledgeList,'k');
+      })
     },
     nextPage() {
       this.fetchBody.currentPage++;
