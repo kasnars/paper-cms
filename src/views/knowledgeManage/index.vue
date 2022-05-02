@@ -31,24 +31,50 @@
         </el-input>
       </el-col>
       <el-col :span="2">
-        <el-button type="primary" @click="searchHttp">搜索题目</el-button>
+        <el-button type="primary" @click="searchHttp">搜索知识点</el-button>
       </el-col>
       <el-col :span="2">
-        <el-button type="primary" @click="addShow = true">新增题目</el-button>
+        <el-button type="primary" @click="addShow = true">新增知识点</el-button>
       </el-col>
     </el-row>
 
         <el-dialog title="新增章节" :visible.sync="addShow">
       <el-form :model="addForm">
  
+        <!-- <el-form-item label="课程名称" :label-width="formLabelWidth">
+          <el-input v-model="addForm.subjectName" autocomplete="off"></el-input>
+        </el-form-item>
+
 
         <el-form-item label="章节名称" :label-width="formLabelWidth">
           <el-input v-model="addForm.chapterName" autocomplete="off"></el-input>
+        </el-form-item> -->
+
+                <el-form-item label="课程名称" :label-width="formLabelWidth">
+          <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
+          <el-select v-model="addForm.subjectName" placeholder="请选择课程">
+            <el-option
+              v-for="item in dropItemList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            ></el-option>
+          </el-select>
         </el-form-item>
 
-        <el-form-item label="课程名称" :label-width="formLabelWidth">
-          <el-input v-model="addForm.subjectName" autocomplete="off"></el-input>
+        <el-form-item label="章节名称" :label-width="formLabelWidth">
+          <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
+          <el-select v-model="addForm.chapterName" placeholder="请选择章节">
+            <el-option
+              v-for="item in chapterList"
+              :key="item.id"
+              :label="item.chapterName"
+              :value="item.chapterName"
+            ></el-option>
+          </el-select>
         </el-form-item>
+
+
 
         <el-form-item label="知识点名称" :label-width="formLabelWidth">
           <el-input v-model="addForm.name" autocomplete="off"></el-input>
@@ -171,6 +197,8 @@ import { getList } from '@/api/table'
 import { findKnowledgeByCnameHttp, addKnowledgeHttp, deleteKnowledgeHttp,  updateKnowledgeHttp, findKnowledgeBySnameHttp } from '@/api/knowledge'
 
 import ChartsPop from '../../components/ChartsPop'
+import { getAllSubjectsHttp } from '@/api/subject'
+import { findChapterHttp } from '@/api/chapter'
 
 export default {
   components:[
@@ -222,13 +250,35 @@ export default {
         subjectName:'',
       },
       formLabelWidth: "auto",
+      chapterList:[],
+      dropItemList:[],
+            defaultFetchBody:{
+        currentPage: 1,
+        pageSize: 9999,
+        name:''
+      },
     }
+  },
+  watch:{
+    "addForm.subjectName"(val){
+      console.log(val,'123123');
+      this.defaultFetchBody.name = val
+
+      findChapterHttp(this.defaultFetchBody).then(res => {
+        this.chapterList = res.data.data
+        console.log(this.chapterList,'c');
+              if(this.chapterList.length == 0){
+        this.addForm.chapterName = null
+      }
+      })
+    },
   },
   created() {
     this.fetchData()
   },
   mounted(){
     this.initData()
+    this.getDropItem()
   },
   methods: {
     handleUpdate(row){
@@ -301,7 +351,22 @@ export default {
     prePage(){
       this.fetchBody.currentPage--
       this.initData()
-    }
+    },
+        getDropItem() {
+      getAllSubjectsHttp({ pageSize: 9999, currentPage: 1 }).then((res) => {
+        console.log(res.data.data);
+        this.dropItemList = res.data.data;
+      });
+      findChapterHttp(this.defaultFetchBody).then(res => {
+        this.chapterList = res.data.data
+        console.log(this.chapterList,'c');
+      })
+      // findKnowledgeByCnameHttp(this.defaultFetchBody).then(res => {
+      //   this.knowledgeList = res.data.data
+      //   console.log(this.knowledgeList,'k');
+      // })
+    },
+    
   }
 }
 </script>

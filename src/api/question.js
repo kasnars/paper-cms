@@ -35,3 +35,7 @@ export const findQuestionHttp = (query) => {
 export const findQuestionByIdHttp = (query) => {
   return fetchPostQuery('/question/findQuestionById', query)
 }
+
+export const findQuestionByCondition = (body) => {
+  return fetchPostBody('/question/findQuestionByCondition',body)
+}

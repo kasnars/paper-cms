@@ -4,7 +4,7 @@
       <Charts-pop></Charts-pop> -->
 
           <el-row :gutter="20">
-      <el-col :span="20">
+      <!-- <el-col :span="20">
         <el-input
           placeholder="请输入章节名搜索"
           prefix-icon="el-icon-search"
@@ -15,9 +15,9 @@
       </el-col>
       <el-col :span="2">
         <el-button type="primary" @click="searchHttp">搜索题目</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="2">
-        <el-button type="primary" @click="addShow = true">新增题目</el-button>
+        <el-button type="primary" @click="addShow = true">新增章节</el-button>
       </el-col>
     </el-row>
 
@@ -189,6 +189,11 @@ export default {
         subjectName:'',
       },
       formLabelWidth: "auto",
+            defaultFetchBody:{
+        currentPage: 1,
+        pageSize: 9999,
+        name:''
+      },
     }
   },
   created() {
@@ -196,6 +201,9 @@ export default {
   },
   mounted(){
     this.initData()
+    let name = this.$route.params.name
+    console.log(name,'inner');
+    this.fetchBody.name = name
   },
   methods: {
     handleUpdate(row){
@@ -243,6 +251,7 @@ export default {
     initData() {
         let query = `currentPage=${this.fetchBody.currentPage}&pageSize=${this.fetchBody.pageSize}`
         console.log(this.fetchBody);
+        this.fetchBody.name = this.$route.params.name
         findChapterHttp(this.fetchBody).then(res => {
             console.log(res,'res');
             this.tableData = res.data.data

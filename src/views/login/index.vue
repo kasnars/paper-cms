@@ -230,7 +230,7 @@ export default {
           console.log(22222);
           setUserInfo(res.data.data)
           setUserLoginStatus()
-          this.$router.push({ path: "/" });
+          this.$router.push({ path: "/userManage/index" });
         }
       });
     },

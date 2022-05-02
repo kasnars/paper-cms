@@ -51,6 +51,20 @@
           </div>
           <el-input v-model="questionInfo.content" v-else></el-input>
         </el-form-item>
+                <el-form-item label="章节">
+          <div v-if="notChangeStatus">
+            {{ questionInfo.chapter || "暂未设置" }}
+          </div>
+          <el-input v-model="questionInfo.chapter" v-else></el-input>
+        </el-form-item>
+        
+                        <el-form-item label="知识点">
+          <div v-if="notChangeStatus">
+            {{ questionInfo.knowledge || "暂未设置" }}
+          </div>
+          <el-input v-model="questionInfo.knowledge" v-else></el-input>
+        </el-form-item>
+
         <el-form-item label="题型">
           <div v-if="notChangeStatus">
             {{ getQuesTypeLabel(questionInfo.questionType) }}
@@ -110,6 +124,12 @@
             {{ questionInfo.answer || "暂未设置" }}
           </div>
           <el-input v-model="questionInfo.answer" v-else></el-input>
+        </el-form-item>
+                                <el-form-item label="题目解析">
+          <div v-if="notChangeStatus">
+            {{ questionInfo.analyz || "暂未设置" }}
+          </div>
+          <el-input v-model="questionInfo.analyz" v-else></el-input>
         </el-form-item>
       </el-form>
     </div>

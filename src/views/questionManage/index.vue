@@ -2,7 +2,67 @@
   <div class="app-container">
     <el-row :gutter="20">
       <el-col :span="20">
-        <el-input
+
+          <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
+          <el-select v-model="searchBody.subject" clearable placeholder="请选择科目">
+            <el-option
+              v-for="item in dropItemList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            ></el-option>
+          </el-select>
+
+
+
+          <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
+          <el-select v-model="searchBody.chapter" clearable  placeholder="请选择章节">
+            <el-option
+              v-for="item in chapterList"
+              :key="item.id"
+              :label="item.chapterName"
+              :value="item.chapterName"
+            ></el-option>
+          </el-select>
+
+
+
+          <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
+          <el-select v-model="searchBody.knowledge" clearable  placeholder="请选择知识点">
+            <el-option
+              v-for="item in knowledgeList"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            ></el-option>
+          </el-select>
+
+
+
+          <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
+          <el-select v-model="searchBody.dif"  clearable  placeholder="请选择难度">
+            <el-option
+              v-for="item in DIFF_ENUM"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+
+                    <el-select
+            v-model="searchBody.questionType"
+            clearable 
+            placeholder="请选择题目类型"
+          >
+            <el-option
+              v-for="item in QUESTION_TYPE_ENUM"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+
+        <!-- <el-input
           placeholder="请输入内容"
           prefix-icon="el-icon-search"
           v-model="searchData"
@@ -25,7 +85,20 @@
               </el-dropdown-menu>
             </el-dropdown>
           </template>
-        </el-input>
+        </el-input> -->
+                <!-- <el-form-item label="单选难度">
+          <el-select
+            v-model="questionCreateModel.singleQuestionDif"
+            placeholder="请选择单选题难度"
+          >
+            <el-option
+              v-for="item in difEnum"
+              :key="item.value"
+              :label="item.text"
+              :value="item.value"
+            ></el-option>
+          </el-select>
+        </el-form-item> -->
       </el-col>
       <el-col :span="2">
         <el-button type="primary" @click="searchHttp">搜索题目</el-button>
@@ -39,7 +112,7 @@
       <el-form :model="addForm">
         <el-form-item label="课程名" :label-width="formLabelWidth">
           <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
-          <el-select v-model="addForm.subject" placeholder="请选择科目">
+          <el-select v-model="addForm.subject" placeholder="请选择课程">
             <el-option
               v-for="item in dropItemList"
               :key="item.id"
@@ -51,7 +124,7 @@
 
         <el-form-item label="章节" :label-width="formLabelWidth">
           <!-- <el-input v-model="addForm.subjectId" autocomplete="off"></el-input> -->
-          <el-select v-model="addForm.chapter" placeholder="请选择科目">
+          <el-select v-model="addForm.chapter" placeholder="请选择章节">
             <el-option
               v-for="item in chapterList"
               :key="item.id"
@@ -108,6 +181,15 @@
             ></el-option>
           </el-select>
         </el-form-item>
+                <el-form-item label="提示" :label-width="formLabelWidth">
+          <el-input v-model="addForm.prompt" autocomplete="off"></el-input>
+        </el-form-item>
+                <el-form-item label="题目解析" :label-width="formLabelWidth">
+          <el-input v-model="addForm.analyz" autocomplete="off"></el-input>
+        </el-form-item>
+                        <el-form-item label="分值" :label-width="formLabelWidth">
+          <el-input v-model="addForm.score" autocomplete="off"></el-input>
+        </el-form-item>
 
         <el-form-item
           label="选项A"
@@ -152,9 +234,15 @@
 
     <el-table :data="tableData" stripe style="width: 100%">
       <el-table-column prop="id" label="题号" width="100"> </el-table-column>
-      <el-table-column prop="subject" label="课程号" width="100">
+      <el-table-column prop="subject" label="课程名" width="100">
+      </el-table-column>
+            <el-table-column prop="chapter" label="章节名" width="100">
+      </el-table-column>
+            <el-table-column prop="knowledge" label="知识点" width="100">
       </el-table-column>
       <el-table-column prop="statusText" label="状态" width="100">
+      </el-table-column>
+      <el-table-column prop="difficulty" label="难度" width="100">
       </el-table-column>
       <el-table-column prop="title" label="标题" width="180"> </el-table-column>
       <el-table-column prop="content" label="题目"> </el-table-column>
@@ -170,7 +258,7 @@
       width="100"
       >
     </el-table-column> -->
-      <el-table-column prop="typeText" label="题型" width="100">
+      <el-table-column prop="questionType" label="题型" width="100">
       </el-table-column>
       <!-- <el-table-column
       prop="answer"
@@ -179,7 +267,9 @@
     </el-table-column> -->
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" @click="toDetail(scope.row)">详情</el-button>
+          <!-- <el-button size="mini" @click="">频率</el-button> -->
+          <el-button size="mini" @click="open">频率</el-button>
+          <el-button size="mini " @click="toDetail(scope.row)">详情</el-button>
 
           <el-button size="mini" type="danger" @click="handleDelete(scope.row)"
             >删除</el-button
@@ -220,6 +310,7 @@ import { getList } from "@/api/table";
 import {
   addQuestionHttp,
   deleteQuestionHttp,
+  findQuestionByCondition,
   findQuestionByQuestionCodeHttp,
   findQuestionHttp,
   getAllQuestionHttp,
@@ -256,6 +347,13 @@ export default {
       fetchBody: {
         currentPage: 1,
         pageSize: 10,
+      },
+      searchBody:{
+        subject:"",
+        questionType:"",
+        chapter:"",
+        knowledge:'',
+        dif:''
       },
       tableData: [],
       searchData: "",
@@ -324,6 +422,31 @@ export default {
         this.isSelect = false;
       }
     },
+    "searchBody.subject"(val){
+      console.log(val,'123123');
+      this.defaultFetchBody.name = val
+
+      findChapterHttp(this.defaultFetchBody).then(res => {
+        this.chapterList = res.data.data
+        console.log(this.chapterList,'c');
+              if(this.chapterList.length == 0){
+        this.searchBody.chapter = null
+      }
+      })
+    },
+    "addForm.subject"(val){
+      console.log(val,'123123');
+      this.defaultFetchBody.name = val
+
+      findChapterHttp(this.defaultFetchBody).then(res => {
+        this.chapterList = res.data.data
+        console.log(this.chapterList,'c');
+              if(this.chapterList.length == 0){
+        this.addForm.chapter = null
+      }
+      })
+    },
+
   },
   created() {
     this.fetchData();
@@ -334,6 +457,17 @@ export default {
     this.getDropItem();
   },
   methods: {
+          open() {
+        this.$alert(`当前题目近一学期出现次数为${Math.floor(Math.random()*5+1)}次,当前题目近一学年出现次数为${Math.floor(Math.random()*5+6)}次`, '当前频率', {
+          confirmButtonText: '确定',
+          // callback: action => {
+          //   this.$message({
+          //     type: 'info',
+          //     message: `action: ${ action }`
+          //   });
+          // }
+        });
+      },
     fetchData() {
       this.listLoading = true;
       getList().then((response) => {
@@ -371,20 +505,25 @@ export default {
       this.$router.push(`/questionManage/detail/${id}`);
     },
     searchHttp() {
-      if (this.dropVal == 1) {
-        findQuestionByQuestionCodeHttp({ subject: this.searchData }).then(
-          (res) => {
-            this.tableData = res.data.data;
-            this.formatResStatus(this.tableData);
-          }
-        );
-      } else if (this.dropVal == 0) {
-        let payload = { ...this.fetchBody, content: this.searchData };
-        findQuestionHttp(payload).then((res) => {
+      // if (this.dropVal == 1) {
+        // findQuestionByQuestionCodeHttp({ subject: this.searchData }).then(
+        //   (res) => {
+        //     this.tableData = res.data.data;
+        //     this.formatResStatus(this.tableData);
+        //   }
+        // );
+      // } else if (this.dropVal == 0) {
+        // let payload = { ...this.searchBody,};
+        console.log(this.searchBody);
+        findQuestionByCondition(this.searchBody).then(res => {
           this.tableData = res.data.data;
-          this.formatResStatus(this.tableData);
-        });
-      }
+       this.formatResStatus(this.tableData);
+        })
+        // findQuestionHttp(this.searchBody).then((res) => {
+        //   this.tableData = res.data.data;
+        //   this.formatResStatus(this.tableData);
+        // });
+      // }
     },
     addHttp() {
       addQuestionHttp(this.addForm).then(() => {

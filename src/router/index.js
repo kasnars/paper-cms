@@ -52,7 +52,8 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '错题列表', icon: 'dashboard',requireLogin:true }
+      meta: { title: '错题列表', icon: 'dashboard',requireLogin:true },
+        hidden: true,
     },
     {
       path: '/:id',
@@ -101,12 +102,16 @@ export const constantRoutes = [
   {
     path: '/chaptersManage',
     component: Layout,
+    // name: 'chaptersManage',
+    // component: () => import('@/views/chaptersManage/index'),
+    // meta: { title: '章节管理', icon: 'form', requireLogin: true }
     children: [
       {
-        path: 'index',
+        path: ':name',
         name: 'chaptersManage',
         component: () => import('@/views/chaptersManage/index'),
-        meta: { title: '章节管理', icon: 'form', requireLogin: true }
+        meta: { title: '章节管理', icon: 'form', requireLogin: true },
+        hidden: true,
       }
     ]
   },
@@ -154,6 +159,19 @@ export const constantRoutes = [
         name: 'paper',
         component: () => import('@/views/paper/index'),
         meta: { title: '试卷平台', icon: 'form',requireLogin:true }
+      }
+    ]
+  },
+
+  {
+    path: '/paper',
+    component: Layout,
+    children: [
+      {
+        path: 'index1',
+        name: 'paper',
+        component: () => import('@/views/paper/index'),
+        meta: { title: '成绩管理', icon: 'form', requireLogin: true }
       }
     ]
   },
