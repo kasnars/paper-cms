@@ -227,6 +227,7 @@
         </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="addHttpRes">继续添加</el-button>
         <el-button @click="addShow = false">取 消</el-button>
         <el-button type="primary" @click="addHttp">确 定</el-button>
       </div>
@@ -242,7 +243,7 @@
       </el-table-column>
       <el-table-column prop="statusText" label="状态" width="100">
       </el-table-column>
-      <el-table-column prop="difficulty" label="难度" width="100">
+      <el-table-column prop="difText" label="难度" width="100">
       </el-table-column>
       <el-table-column prop="title" label="标题" width="180"> </el-table-column>
       <el-table-column prop="content" label="题目"> </el-table-column>
@@ -258,7 +259,7 @@
       width="100"
       >
     </el-table-column> -->
-      <el-table-column prop="questionType" label="题型" width="100">
+      <el-table-column prop="typeText" label="题型" width="100">
       </el-table-column>
       <!-- <el-table-column
       prop="answer"
@@ -411,16 +412,19 @@ export default {
   },
   watch: {
     "addForm.questionType"(val) {
-      if (val <= 1) {
-        this.addForm.score = 5;
+      if (val <= 2) {
+        // this.addForm.score = 5;
         this.isSelect = true;
-      } else if (val === 2) {
-        this.addForm.score = 10;
-        this.isSelect = false;
-      } else if (val === 3) {
-        this.addForm.score = 20;
+      } else{
         this.isSelect = false;
       }
+      // else if (val === 2) {
+      //   this.addForm.score = 10;
+      //   this.isSelect = false;
+      // } else if (val === 3) {
+      //   this.addForm.score = 20;
+      //   this.isSelect = false;
+      // }
     },
     "searchBody.subject"(val){
       console.log(val,'123123');
@@ -489,6 +493,7 @@ export default {
           item.statusText = item.status ? "有效" : "失效";
           // item.diffText = getDiffLabel(item.difficulty)
           item.typeText = getQuesTypeLabel(item.questionType);
+          item.difText = getDiffLabel(item.difficulty)
           // console.log(typeof item.difficulty,'diff');
         });
         this.tableData = res.data.data;
@@ -531,6 +536,20 @@ export default {
         this.$message.success("添加成功");
       });
       this.addShow = false;
+    },
+    addHttpRes(){
+      addQuestionHttp(this.addForm).then(() => {
+        this.initData();
+        // this.addForm = null
+/*         this.addForm.answer = null
+        this.addForm.content = null
+        this.addForm.title = null */
+        let setAll = (obj, val) => Object.keys(obj).forEach(k => obj[k] = val);
+let setNull = obj => setAll(obj, null);
+setNull(this.addForm)
+        this.$message.success("添加成功");
+      });
+      // this.addShow = false;
     },
     handleDelete(row) {
       const { id } = row;
